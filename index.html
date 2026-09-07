@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>验证码生成器</title>
-    <!-- 禁止浏览器缓存代码 -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -104,7 +100,6 @@
         }
         .countdown.urgent { color: #f44336; }
         .warning-text {
-            display: none;
             margin-top: 10px;
             padding: 10px;
             background: #fff3cd;
@@ -115,37 +110,16 @@
             line-height: 1.5;
             font-weight: 700;
         }
-        .warning-text.show { display: block; }
-        .next-code-section {
-            display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background: #e8f5e9;
-            border: 1px solid #4CAF50;
-            border-radius: 8px;
-        }
-        .next-code-section.show { display: block; }
-        .next-code-label {
-            font-size: 12px;
-            color: #4CAF50;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
-        .next-code {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
-            user-select: all;
-        }
         .info {
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid #eee;
             font-size: 12px;
-            color: #f44336;
             line-height: 1.6;
+        }
+        .green-bold{
+            color:#28a745;
+            font-weight:bold;
         }
         .refreshing { opacity: 0.5; transition: opacity 0.3s; }
     </style>
@@ -166,20 +140,15 @@
             <div class="countdown" id="countdown">05:00</div>
         </div>
 
+        <!--已替换文字，永久显示-->
         <div class="warning-text" id="warningText">
-            上方的验证码即将过期作废！<br>请复制下方的新验证码使用！
-        </div>
-
-        <div class="next-code-section" id="nextCodeSection">
-            <div class="next-code-label">新验证码（即将生效）</div>
-            <div class="next-code" id="nextCode">------</div>
-            <button class="copy-btn" style="background:#4CAF50;margin-top:8px;" onclick="copyNextCode()">复制新验证码</button>
+            点击上方【复制验证码】蓝色按钮即可复制！
         </div>
 
         <div class="info">
-            验证码为15位英文+数字组合<br>
-            5分钟内有效，请尽快完成验证<br>
-            登录有效期为一年，超过后需要重新验证
+            <span class="green-bold">验证码为15位英文+数字组合</span><br>
+            <span class="green-bold">5分钟内有效，请尽快完成验证</span><br>
+            <span class="green-bold">登录有效期为一年，到期后需要重新验证</span>
         </div>
     </div>
 
@@ -273,8 +242,6 @@
         var timerFill = document.getElementById('timerFill');
         var countdown = document.getElementById('countdown');
         var codeDisplay = document.getElementById('codeDisplay');
-        var warningText = document.getElementById('warningText');
-        var nextCodeSection = document.getElementById('nextCodeSection');
 
         timerFill.style.width = percent + '%';
         countdown.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
@@ -283,15 +250,10 @@
             timerFill.classList.add('urgent');
             countdown.classList.add('urgent');
             codeDisplay.classList.add('warning');
-            warningText.classList.add('show');
-            nextCodeSection.classList.add('show');
-            document.getElementById('nextCode').textContent = generatePassword(now + SLOT_MS);
         } else {
             timerFill.classList.remove('urgent');
             countdown.classList.remove('urgent');
             codeDisplay.classList.remove('warning');
-            warningText.classList.remove('show');
-            nextCodeSection.classList.remove('show');
         }
 
         var currentSlot = Math.floor(now / SLOT_MS);
@@ -310,13 +272,6 @@
     }
 
     function copyCode() { doCopy(document.getElementById('code').textContent); }
-    function copyNextCode() {
-        doCopy(document.getElementById('nextCode').textContent);
-        var btn = event.target;
-        btn.textContent = '已复制';
-        btn.style.background = '#2196F3';
-        setTimeout(function() { btn.textContent = '复制新验证码'; btn.style.background = '#4CAF50'; }, 2000);
-    }
 
     function fallbackCopy(text) {
         var ta = document.createElement('textarea');
